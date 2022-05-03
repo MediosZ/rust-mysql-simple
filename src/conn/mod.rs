@@ -404,32 +404,32 @@ impl Conn {
         let tcp_nodelay = opts.get_tcp_nodelay();
         let tcp_connect_timeout = opts.get_tcp_connect_timeout();
         let bind_address = opts.bind_address().cloned();
-        let stream = if let Some(socket) = opts.get_socket() {
-            Stream::connect_socket(&*socket, read_timeout, write_timeout)?
-        } else {
-            let port = opts.get_tcp_port();
-            let ip_or_hostname = match opts.get_host() {
-                url::Host::Domain(domain) => domain,
-                url::Host::Ipv4(ip) => ip.to_string(),
-                url::Host::Ipv6(ip) => ip.to_string(),
-            };
-            Stream::connect_tcp(
-                &*ip_or_hostname,
-                port,
-                read_timeout,
-                write_timeout,
-                tcp_keepalive_time,
-                #[cfg(any(target_os = "linux", target_os = "macos",))]
-                tcp_keepalive_probe_interval_secs,
-                #[cfg(any(target_os = "linux", target_os = "macos",))]
-                tcp_keepalive_probe_count,
-                #[cfg(target_os = "linux")]
-                tcp_user_timeout,
-                tcp_nodelay,
-                tcp_connect_timeout,
-                bind_address,
-            )?
+        // let stream = if let Some(socket) = opts.get_socket() {
+        //     Stream::connect_socket(&*socket, read_timeout, write_timeout)?
+        // } else {
+        let port = opts.get_tcp_port();
+        let ip_or_hostname = match opts.get_host() {
+            url::Host::Domain(domain) => domain,
+            url::Host::Ipv4(ip) => ip.to_string(),
+            url::Host::Ipv6(ip) => ip.to_string(),
         };
+        let stream = Stream::connect_tcp(
+            &*ip_or_hostname,
+            port,
+            read_timeout,
+            write_timeout,
+            tcp_keepalive_time,
+            #[cfg(any(target_os = "linux", target_os = "macos",))]
+            tcp_keepalive_probe_interval_secs,
+            #[cfg(any(target_os = "linux", target_os = "macos",))]
+            tcp_keepalive_probe_count,
+            #[cfg(target_os = "linux")]
+            tcp_user_timeout,
+            tcp_nodelay,
+            tcp_connect_timeout,
+            bind_address,
+        )?;
+        // };
         self.0.stream = Some(MySyncFramed::new(stream));
         Ok(())
     }
@@ -648,7 +648,8 @@ impl Conn {
         attrs.insert("_client_name".into(), "rust-mysql-simple".into());
         attrs.insert("_client_version".into(), env!("CARGO_PKG_VERSION").into());
         attrs.insert("_os".into(), env!("CARGO_CFG_TARGET_OS").into());
-        attrs.insert("_pid".into(), process::id().to_string());
+        // FIXME: Fix the process id
+        attrs.insert("_pid".into(), "66666".into());
         attrs.insert("_platform".into(), env!("CARGO_CFG_TARGET_ARCH").into());
         attrs.insert("program_name".into(), program_name);
 

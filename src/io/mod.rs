@@ -17,10 +17,12 @@ use std::os::{
     unix::io::{AsRawFd, RawFd},
 };
 use std::{
-    fmt, io,
-    net::{self, SocketAddr},
+    fmt,
+    io,
+    // net::{self, SocketAddr},
     time::Duration,
 };
+use wasmedge_wasi_socket::{self, SocketAddr};
 
 use crate::error::{
     DriverError::{ConnectTimeout, CouldNotConnect},
@@ -142,10 +144,11 @@ impl Stream {
     }
 
     pub fn is_socket(&self) -> bool {
-        match self {
-            Stream::SocketStream(_) => true,
-            _ => false,
-        }
+        false
+        // match self {
+        //     Stream::SocketStream(_) => true,
+        //     _ => false,
+        // }
     }
 
     #[cfg(all(not(feature = "native-tls"), not(feature = "rustls")))]
@@ -173,7 +176,7 @@ pub enum TcpStream {
     Secure(BufStream<native_tls::TlsStream<net::TcpStream>>),
     #[cfg(feature = "rustls")]
     Secure(BufStream<rustls::StreamOwned<rustls::ClientConnection, net::TcpStream>>),
-    Insecure(BufStream<net::TcpStream>),
+    Insecure(BufStream<wasmedge_wasi_socket::TcpStream>),
 }
 
 #[cfg(unix)]
