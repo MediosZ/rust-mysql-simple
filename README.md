@@ -16,4 +16,4 @@
 ## Notes
 
 1. I disable `tls` for now.
-2. I use a forked [wasmedge_wasi_socket](https://github.com/MediosZ/wasmedge_wasi_socket).
+2. I use a forked [wasmedge_wasi_socket](https://github.com/MediosZ/wasmedge_wasi_socket/tree/mysql).
