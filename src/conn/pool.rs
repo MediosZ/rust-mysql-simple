@@ -396,6 +396,7 @@ impl Queryable for PooledConn {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod test {
